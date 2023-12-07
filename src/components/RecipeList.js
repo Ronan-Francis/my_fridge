@@ -16,7 +16,7 @@ const RecipeList = () => {
 
   return (
     <div className="recipe-list">
-      <h2>Recipes</h2>
+
       {recipes.map((recipe) => (
         <RecipeCard key={recipe._id} recipe={recipe} />
       ))}

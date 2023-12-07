@@ -50,3 +50,85 @@
     padding: 16px;
   }
   
+
+
+/* Override Bootstrap Navbar styles */
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff; /* Set text color to white */
+  }
+  
+  .navbar-dark .navbar-toggler-icon {
+    background-color: #fff; /* Set the hamburger icon color to white */
+  }
+  
+  /* Style the Navbar background and border */
+  .navbar {
+    background-color: #343a40; /* Set the background color */
+    border-bottom: 1px solid #555; /* Add a bottom border for separation */
+  }
+  
+  /* Style the Navbar brand text */
+  .navbar-brand {
+    color: #fff; /* Set brand text color to white */
+    font-weight: bold; /* Make the text bold */
+  }
+  
+  /* Style the active Nav.Link */
+  .navbar-dark .navbar-nav .nav-link.active,
+  .navbar-dark .navbar-nav .nav-link:hover {
+    color: #17a2b8; /* Set the active and hover link text color */
+  }
+  
+  /* Optional: Add some padding to the Navbar links */
+  .navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Optional: Add some space to the Navbar brand */
+  .navbar-brand {
+    margin-right: 2rem;
+  }
+  
+
+  .login-container {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 10px;
+  }
+  
+  input {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .login-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3;
+  }
+  

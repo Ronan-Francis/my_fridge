@@ -1,34 +1,58 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// src/components/App.js
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import axios from 'axios';
 import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import NavbarComponent from './components/Navbar';
 import RecipeList from './components/RecipeList';
 import RecipeDetail from './components/RecipeDetail';
 import FeaturedRecipes from './components/FeaturedRecipes';
 import RecipeForm from './components/RecipeForm';
+import LoginPage from './components/LoginPage';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+  // Function to check authentication by username and password
+  const checkAuthentication = async (username, password) => {
+    try {
+      const response = await axios.post('http://localhost:4000/api/user/check-auth', {
+        username,
+        password,
+      });
+
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error('Error checking authentication:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Example: Check authentication with a default user
+    checkAuthentication('exampleUsername', 'examplePassword');
+  }, []);
+
   return (
     <Router>
-      <div className="App">
-        <Navbar bg="dark" data-bs-theme="dark">
-          <Container>
-            <Navbar.Brand href="/">LOGO</Navbar.Brand>
-            <Nav className="me-auto">
-              <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="/create">Create</Nav.Link>
-              <Nav.Link href="/featured">Featured</Nav.Link>
-            </Nav>
-          </Container>
-        </Navbar>
+      {isLoggedIn ? (
+        <div className="App">
+          <NavbarComponent />
+          <Routes>
+            <Route path="/" element={<RecipeList />} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
+            <Route path="/featured" element={<FeaturedRecipes />} />
+            <Route path="/create" element={<RecipeForm />} />
+          </Routes>
+        </div>
+      ) : (
         <Routes>
-          <Route path="/" element={<RecipeList />} />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/featured" element={<FeaturedRecipes />} />
-          <Route path="/create" element={<RecipeForm />} />
+          <Route
+            path="/"
+            element={<Navigate to="/login" />}
+          />
+          <Route path="/login" element={<LoginPage onLogin={() => setIsLoggedIn(true)} />} />
         </Routes>
-      </div>
+      )}
     </Router>
   );
 }

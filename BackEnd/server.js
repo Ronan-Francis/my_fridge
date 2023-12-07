@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 app.use(cors());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -27,6 +27,38 @@ async function main() {
 }
 
 main().catch((err) => console.log(err));
+
+const userSchema = new mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  savedRecipeIds: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Recipe',
+  },
+  savedIngredientIds: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Ingredient',
+  },
+  additionalInfo: {
+    email: String,
+    preferences: {
+      dietary: [String],
+      cuisine: [String],
+    },
+  },
+});
+
+const userModel = mongoose.model('recipes.users', userSchema);
+
+
 
 const recipeSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
@@ -105,7 +137,6 @@ app.get('/api/recipes', async (req, res) => {
 });
 
 
-
 app.get('/api/recipe/:identifier', async (req, res) => {
   console.log('Fetching recipe by ID:', req.params.identifier);
   try {
@@ -144,6 +175,138 @@ app.delete('/api/recipe/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+// Add routes for users
+
+// User Registration
+app.post('/api/user/register', async (req, res) => {
+  try {
+    const { username, password, email, preferences } = req.body;
+
+    // Validate required fields
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    // Check if the username is already taken
+    const existingUser = await userModel.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Username already taken' });
+    }
+
+    // Create a new user
+    const newUser = await userModel.create({
+      _id: new mongoose.Types.ObjectId(),
+      username,
+      password, // TODO: Hash the password before saving
+      additionalInfo: { email, preferences },
+    });
+
+    res.status(201).json({ message: 'User registered successfully', user: newUser });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// User Login
+app.post('/api/user/login', async (req, res) => {
+  const { usernameLogin, passwordLogin } = req.body;
+  
+  console.log("Log in attempt by "+usernameLogin + " , "+ passwordLogin)
+  try {
+
+    // Validate required fields
+    if (!usernameLogin || !passwordLogin) {
+      return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    const user = await userModel.findOne({ username:usernameLogin})
+
+    if (!user) {
+      console.log("User not found");
+    } else {
+      console.log("Found user:", user);
+    }
+    
+
+    // Check if the user exists
+    if (!user) {
+      console.log("Invalid Username");
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check if the password matches (without encryption)
+    if (user.password !== passwordLogin) {
+      console.log("Invalid Password")
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Set user.isAuthenticated to true (if needed)
+    user.isAuthenticated = true;
+
+    // Respond with a success message and user details
+    res.json({ message: 'Login successful', userId: user._id });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+// Get User Profile
+app.get('/api/user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Find the user by ID
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Update User Profile
+app.put('/api/user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updateData = req.body;
+
+    // Update the user profile
+    const updatedUser = await userModel.findByIdAndUpdate(userId, updateData, { new: true });
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Delete User Account
+app.delete('/api/user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Delete the user
+    const deletedUser = await userModel.findByIdAndDelete(userId);
+
+    res.json(deletedUser);
+  } catch (error) {
+    console.error('Error deleting user account:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
