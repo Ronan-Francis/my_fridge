@@ -13,6 +13,7 @@ const Navbar = () => {
           <Nav.Link href="/">Home</Nav.Link>
           <Nav.Link href="/create">Post</Nav.Link>
           <Nav.Link href="/featured">Featured</Nav.Link>
+          <Nav.Link href="/search">Recipe Search</Nav.Link>
         </Nav>
       </Container>
     </NavbarBootstrap>

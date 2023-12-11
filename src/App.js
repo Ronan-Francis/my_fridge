@@ -9,6 +9,7 @@ import RecipeDetail from './components/RecipeDetail';
 import FeaturedRecipes from './components/FeaturedRecipes';
 import RecipeForm from './components/RecipeForm';
 import LoginPage from './components/LoginPage';
+import RecipeSearch from './components/RecipeSearch';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -42,6 +43,7 @@ function App() {
             <Route path="/recipe/:id" element={<RecipeDetail />} />
             <Route path="/featured" element={<FeaturedRecipes />} />
             <Route path="/create" element={<RecipeForm />} />
+            <Route path="/search" element={<RecipeSearch />} />
           </Routes>
         </div>
       ) : (

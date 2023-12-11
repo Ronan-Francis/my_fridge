@@ -176,6 +176,43 @@ app.delete('/api/recipe/:id', async (req, res) => {
   }
 });
 
+// Add a new route for fetching all unique ingredients from recipes
+app.get('/api/ingredients', async (req, res) => {
+  try {
+    const allRecipes = await recipeModel.find({}, 'ingredients');
+    const allIngredients = Array.from(new Set(allRecipes.flatMap(recipe => recipe.ingredients)));
+    res.json(allIngredients);
+  } catch (error) {
+    console.error('Error fetching ingredients:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.get('/api/recipes/by-ingredients', async (req, res) => {
+  try {
+    const ingredientArray = req.query.ingredients;
+
+    if (!ingredientArray || !Array.isArray(ingredientArray)) {
+      return res.status(400).json({ error: 'Invalid or missing ingredients parameter' });
+    }
+
+    // Case-insensitive search for recipes containing any of the specified ingredients
+    const filter = {
+      ingredients: { $in: ingredientArray.map(ingredient => new RegExp(ingredient, 'i')) }
+    };
+
+    console.log('Fetching recipes with ingredients:', ingredientArray);
+    let recipes = await recipeModel.find(filter);
+    console.log('Fetched recipes:', recipes);
+    
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error fetching recipes by ingredients:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Add routes for users
 
@@ -253,9 +290,6 @@ app.post('/api/user/login', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
-
 
 // Get User Profile
 app.get('/api/user/:id', async (req, res) => {
