@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import './styles.css';
 
 function RecipeSearch() {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [allIngredients, setAllIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
+
 
   useEffect(() => {
     // Fetch the list of all ingredients when the component mounts
@@ -24,7 +26,16 @@ function RecipeSearch() {
     try {
       const response = await fetch(`http://localhost:4000/api/recipes/by-ingredients?ingredients=${selectedIngredients.join(',')}`);
       const data = await response.json();
-      setRecipes(data);
+
+      // Sort recipes by the number of missing ingredients
+      const sortedRecipes = data.sort((a, b) => {
+        const missingIngredientsA = a.ingredients.filter(ingredient => !selectedIngredients.includes(ingredient));
+        const missingIngredientsB = b.ingredients.filter(ingredient => !selectedIngredients.includes(ingredient));
+
+        return missingIngredientsA.length - missingIngredientsB.length;
+      });
+
+      setRecipes(sortedRecipes);
     } catch (error) {
       console.error('Error fetching recipes:', error);
     }
@@ -41,8 +52,8 @@ function RecipeSearch() {
           onChange={(e) => setSelectedIngredients(Array.from(e.target.selectedOptions, option => option.value))}
         >
           {allIngredients.map((ingredient) => (
-            <option key={ingredient} value={ingredient}>
-              {ingredient}
+            <option key={ingredient.name} value={ingredient.name}>
+              {ingredient.name}
             </option>
           ))}
         </select>
@@ -52,7 +63,17 @@ function RecipeSearch() {
       <h3>Matching Recipes:</h3>
       <ul>
         {recipes.map((recipe) => (
-          <li key={recipe._id}>{recipe.name}</li>
+          <li key={recipe._id}>
+            <strong>{recipe.name}</strong>
+            <ul>
+              {recipe.ingredients.map((ingredient) => (
+                <li key={ingredient} style={{ color: selectedIngredients.includes(ingredient) ? 'green' : 'red' }}>
+                  {ingredient}
+                </li>
+              ))}
+            </ul>
+            <p>Missing Ingredients: {recipe.ingredients.filter(ingredient => !selectedIngredients.includes(ingredient)).join(', ')}</p>
+          </li>
         ))}
       </ul>
     </div>

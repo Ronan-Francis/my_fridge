@@ -176,17 +176,38 @@ app.delete('/api/recipe/:id', async (req, res) => {
   }
 });
 
-// Add a new route for fetching all unique ingredients from recipes
 app.get('/api/ingredients', async (req, res) => {
   try {
-    const allRecipes = await recipeModel.find({}, 'ingredients');
-    const allIngredients = Array.from(new Set(allRecipes.flatMap(recipe => recipe.ingredients)));
-    res.json(allIngredients);
+    const searchQuery = req.query.search;
+    let filter = {};
+
+    if (searchQuery) {
+      // Case-insensitive search for recipes containing the search term in ingredients
+      filter = { 'ingredients': { $regex: new RegExp(searchQuery, 'i') } };
+    }
+
+    console.log('Fetching ingredients with filter:', filter);
+    
+    // Use aggregate to get distinct ingredients
+    let ingredients = await recipeModel.aggregate([
+      { $match: filter },
+      { $unwind: '$ingredients' },
+      { $group: { _id: '$ingredients' } }
+    ]);
+
+    ingredients = ingredients.map(item => item._id);
+
+    console.log('Fetched ingredients:', ingredients);
+    res.json(ingredients);
   } catch (error) {
     console.error('Error fetching ingredients:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+
 
 
 app.get('/api/recipes/by-ingredients', async (req, res) => {

@@ -132,9 +132,6 @@
     background-color: #0056b3;
   }
   
-
-  /* style.css */
-
 /* Center the form content */
 .center {
   text-align: center;
@@ -161,4 +158,61 @@ input[type="submit"] {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+
+body {
+  font-family: 'Arial', sans-serif;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h2 {
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+}
+
+h3 {
+  color: #333;
+  margin-top: 20px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+strong {
+  font-weight: bold;
+  color: #333;
+}
+
+p {
+  margin-top: 5px;
+  color: #777;
 }
