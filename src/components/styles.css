@@ -167,7 +167,6 @@ body {
 
 .container {
   max-width: 600px;
-  margin: 0 auto;
   padding: 20px;
 }
 
@@ -215,4 +214,71 @@ strong {
 p {
   margin-top: 5px;
   color: #777;
+}
+
+.recipe-search-container {
+  font-family: 'Arial', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.search-results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-results li {
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-results li:hover {
+  background-color: #e0e0e0;
+}
+
+.selected-ingredients {
+  margin-top: 15px;
+}
+
+.selected-ingredients h4 {
+  margin-bottom: 8px;
+}
+
+.selected-ingredients ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-ingredients li {
+  margin-bottom: 6px;
+}
+
+.available-recipes {
+  margin-top: 20px;
+}
+
+.available-recipes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.available-recipes li {
+  margin-bottom: 10px;
 }

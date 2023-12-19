@@ -178,36 +178,19 @@ app.delete('/api/recipe/:id', async (req, res) => {
 
 app.get('/api/ingredients', async (req, res) => {
   try {
-    const searchQuery = req.query.search;
-    let filter = {};
-
-    if (searchQuery) {
-      // Case-insensitive search for recipes containing the search term in ingredients
-      filter = { 'ingredients': { $regex: new RegExp(searchQuery, 'i') } };
-    }
-
-    console.log('Fetching ingredients with filter:', filter);
+    // Use distinct method to get unique ingredient names
+    let ingredientNames = await recipeModel.distinct('ingredients.name');
     
-    // Use aggregate to get distinct ingredients
-    let ingredients = await recipeModel.aggregate([
-      { $match: filter },
-      { $unwind: '$ingredients' },
-      { $group: { _id: '$ingredients' } }
-    ]);
-
-    ingredients = ingredients.map(item => item._id);
-
-    console.log('Fetched ingredients:', ingredients);
-    res.json(ingredients);
+    // Remove duplicates from the array
+    ingredientNames = [...new Set(ingredientNames)];
+    
+    console.log('Fetched unique ingredient names:', ingredientNames);
+    res.json(ingredientNames);
   } catch (error) {
-    console.error('Error fetching ingredients:', error);
+    console.error('Error fetching ingredient names:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
-
-
 
 
 app.get('/api/recipes/by-ingredients', async (req, res) => {
@@ -215,7 +198,7 @@ app.get('/api/recipes/by-ingredients', async (req, res) => {
     const ingredientArray = req.query.ingredients;
 
     if (!ingredientArray || !Array.isArray(ingredientArray)) {
-      return res.status(400).json({ error: 'Invalid or missing ingredients parameter' });
+      return res.status(400).json([{ error: 'Invalid or missing ingredients parameter' }]);
     }
 
     // Case-insensitive search for recipes containing any of the specified ingredients
@@ -230,9 +213,10 @@ app.get('/api/recipes/by-ingredients', async (req, res) => {
     res.json(recipes);
   } catch (error) {
     console.error('Error fetching recipes by ingredients:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json([{ error: 'Internal Server Error' }]);
   }
 });
+
 
 
 // Add routes for users
