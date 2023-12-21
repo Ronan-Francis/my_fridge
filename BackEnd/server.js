@@ -195,25 +195,25 @@ app.get('/api/ingredients', async (req, res) => {
 
 app.get('/api/recipes/by-ingredients', async (req, res) => {
   try {
-    const ingredientArray = req.query.ingredients;
+    // Parsing the ingredients query parameter as an array
+    const ingredientArray = typeof req.query.ingredients === 'string' ? req.query.ingredients.split(',') : [];
 
-    if (!ingredientArray || !Array.isArray(ingredientArray)) {
-      return res.status(400).json([{ error: 'Invalid or missing ingredients parameter' }]);
+    let filter = {};
+    if (ingredientArray.length > 0) {
+      // Using $all to match recipes containing all ingredients in the array
+      filter.ingredients = { $all: ingredientArray.map(ingredient => new RegExp(`^${ingredient}$`, 'i')) };
+      console.log('Fetching recipes with ingredients:', ingredientArray);
+    } else {
+      console.log('Fetching all recipes as no specific ingredients were provided');
     }
 
-    // Case-insensitive search for recipes containing any of the specified ingredients
-    const filter = {
-      ingredients: { $in: ingredientArray.map(ingredient => new RegExp(ingredient, 'i')) }
-    };
-
-    console.log('Fetching recipes with ingredients:', ingredientArray);
     let recipes = await recipeModel.find(filter);
     console.log('Fetched recipes:', recipes);
-    
+
     res.json(recipes);
   } catch (error) {
-    console.error('Error fetching recipes by ingredients:', error);
-    res.status(500).json([{ error: 'Internal Server Error' }]);
+    console.error('Error fetching recipes:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

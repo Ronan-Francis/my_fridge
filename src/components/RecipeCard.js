@@ -13,6 +13,18 @@ const RecipeCard = ({ recipe }) => {
 
   // Round the total time based on the last digit
   const roundedTotalTime = customRound(totalTime);
+  
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this recipe?')) {
+      fetch(`http://yourserverurl/api/recipe/${recipe.id}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => console.log('Recipe deleted:', data))
+      .catch(error => console.error('Error:', error));
+    }
+  };
+
 
   return (
     <div className="recipe-card">
@@ -41,8 +53,11 @@ const RecipeCard = ({ recipe }) => {
       <a href={recipe.originalURL} target="_blank" rel="noopener noreferrer">
         Original Recipe Link
       </a>
+      <button onClick={handleDelete}>Delete Recipe</button>
+
     </div>
   );
 };
+
 
 export default RecipeCard;
