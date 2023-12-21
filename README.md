@@ -44,18 +44,6 @@ The server will start running on the specified port (default: 4000).
 - Recipe retrieval by various parameters
 - Featured recipes section
 
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning.
-
 ## Authors
 
-- **Your Name** - _Initial work_ - [YourGitHubProfile](https://github.com/YourGitHubProfile)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+- **Ronan Francis** - _Initial work_ - [Ronan-Francis](https://github.com/Ronan-Francis)
